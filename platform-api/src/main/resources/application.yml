@@ -1,0 +1,38 @@
+spring:
+  application:
+    name: forgepath-platform-api
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/forgepath}
+    username: ${DB_USERNAME:forgepath}
+    password: ${DB_PASSWORD:forgepath_local}
+
+  flyway:
+    enabled: true
+    location: classpath:db/migration
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+
+
+server:
+  port: ${SERVER_POST:8080}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include:
+          - health
+          - info
+
+  endpoint:
+    health:
+      show-details: never
+
+info:
+  application:
+    name: ForgePath Platform API
+    description: Control plane API for the ForgePath Internal Developer Platform
