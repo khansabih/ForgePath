@@ -50,6 +50,12 @@
 			<artifactId>spring-boot-starter-webmvc-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<!-- For Getter, setters and constructor management -->
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<optional>true</optional>
+		</dependency>
 		<!-- Health and Operational endpoints -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
