@@ -4,6 +4,7 @@ import io.github.khansabih.forgepath.catalog.service.api.CreateServiceRequest;
 import io.github.khansabih.forgepath.catalog.service.api.PlatformServiceResponse;
 import io.github.khansabih.forgepath.catalog.service.domain.PlatformService;
 import io.github.khansabih.forgepath.catalog.service.exception.PlatformServiceAlreadyExistsException;
+import io.github.khansabih.forgepath.catalog.service.exception.PlatformServiceNotFoundException;
 import io.github.khansabih.forgepath.catalog.service.persistence.PlatformServiceRepository;
 import io.github.khansabih.forgepath.catalog.team.domain.Team;
 import io.github.khansabih.forgepath.catalog.team.exception.TeamNotFoundException;
@@ -13,6 +14,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -46,5 +50,29 @@ public class ServiceCatalogService {
         }catch(DataIntegrityViolationException e) {
             throw new PlatformServiceAlreadyExistsException(normalizedName);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<PlatformServiceResponse> getServices(){
+        return platformServiceRepository.findAllByOrderByNameAsc()
+                .stream().map(PlatformServiceResponse::from)
+                .toList();
+    }
+
+    @Transactional(readOnly = true)
+    public PlatformServiceResponse getService(UUID serviceId){
+        return platformServiceRepository.findById(serviceId)
+                .map(PlatformServiceResponse::from)
+                .orElseThrow(() -> new PlatformServiceNotFoundException(serviceId));
+    }
+
+    @Transactional(readOnly = true)
+    public List<PlatformServiceResponse> getServicesByOwnerTeam(UUID ownerTeamId){
+        if(!teamRepository.existsById(ownerTeamId)){
+            throw new TeamNotFoundException(ownerTeamId);
+        }
+
+        return platformServiceRepository.findAllByOwnerTeam_IdOrderByNameAsc(ownerTeamId)
+                .stream().map(PlatformServiceResponse::from).toList();
     }
 }

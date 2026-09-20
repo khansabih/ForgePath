@@ -1,5 +1,7 @@
 package io.github.khansabih.forgepath.common.error;
 
+import io.github.khansabih.forgepath.catalog.service.exception.PlatformServiceAlreadyExistsException;
+import io.github.khansabih.forgepath.catalog.service.exception.PlatformServiceNotFoundException;
 import io.github.khansabih.forgepath.catalog.team.exception.TeamAlreadyExistsException;
 import io.github.khansabih.forgepath.catalog.team.exception.TeamNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -71,6 +73,36 @@ public class GlobalExceptionHandler{
         );
 
         return ResponseEntity.status(status).body(apiError);
+    }
+
+//    FOR CATALOG SERVICE CONTROLLER EXCEPTION.
+
+    @ExceptionHandler(PlatformServiceAlreadyExistsException.class)
+    public ResponseEntity<ApiError> handleServiceAlreadyExists(
+            PlatformServiceAlreadyExistsException exception,
+            HttpServletRequest request
+    ) {
+
+        return buildErrorResponse(
+                HttpStatus.CONFLICT,
+                exception.getMessage(),
+                request.getRequestURI(),
+                Map.of()
+        );
+    }
+
+    @ExceptionHandler(PlatformServiceNotFoundException.class)
+    public ResponseEntity<ApiError> handleServiceNotFound(
+            PlatformServiceNotFoundException exception,
+            HttpServletRequest request
+    ) {
+
+        return buildErrorResponse(
+                HttpStatus.NOT_FOUND,
+                exception.getMessage(),
+                request.getRequestURI(),
+                Map.of()
+        );
     }
 
 }
